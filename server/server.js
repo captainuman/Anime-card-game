@@ -13,7 +13,7 @@ const { registerSocketHandlers } = require("./sockets");
 const app = express();
 const server = http.createServer(app);
 
-const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+const clientUrl = process.env.CLIENT_URL || "https://anime-card-game.vercel.app";
 
 const corsOptions = {
   origin: clientUrl,
