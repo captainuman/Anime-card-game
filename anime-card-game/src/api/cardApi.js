@@ -57,7 +57,9 @@ export const getCard = async (id) => {
     throw new Error("Card ID is required.");
   }
 
-  const response = await fetch(`${API_URL}/${encodeURIComponent(id)}`);
+  const response = await fetch(
+    `${API_URL}/${encodeURIComponent(id)}`,
+  );
 
   return parseResponse(response, "Failed to fetch card.");
 };
@@ -80,19 +82,24 @@ export const createCard = async (formData) => {
   return parseResponse(response, "Failed to create card.");
 };
 
-export const createCardsBulk = async (formData) => {
+export const createCardsBulk = async (cards) => {
   const token = requireToken();
 
-  if (!(formData instanceof FormData)) {
-    throw new Error("Bulk card data must be provided as FormData.");
+  if (!Array.isArray(cards)) {
+    throw new Error("Bulk card data must be provided as an array.");
+  }
+
+  if (cards.length === 0) {
+    throw new Error("No cards were provided for bulk upload.");
   }
 
   const response = await fetch(`${API_URL}/bulk`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     },
-    body: formData,
+    body: JSON.stringify(cards),
   });
 
   return parseResponse(response, "Failed to create cards.");
@@ -109,13 +116,16 @@ export const updateCard = async (id, formData) => {
     throw new Error("Card data must be provided as FormData.");
   }
 
-  const response = await fetch(`${API_URL}/${encodeURIComponent(id)}`, {
-    method: "PUT",
-    headers: {
-      Authorization: `Bearer ${token}`,
+  const response = await fetch(
+    `${API_URL}/${encodeURIComponent(id)}`,
+    {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
     },
-    body: formData,
-  });
+  );
 
   return parseResponse(response, "Failed to update card.");
 };
@@ -127,12 +137,15 @@ export const deleteCard = async (id) => {
     throw new Error("Card ID is required.");
   }
 
-  const response = await fetch(`${API_URL}/${encodeURIComponent(id)}`, {
-    method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${token}`,
+  const response = await fetch(
+    `${API_URL}/${encodeURIComponent(id)}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     },
-  });
+  );
 
   return parseResponse(response, "Failed to delete card.");
 };
